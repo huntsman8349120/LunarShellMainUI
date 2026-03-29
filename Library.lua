@@ -1,3 +1,9 @@
+--[[
+    LUNARSHELL HUB - Script Library
+    Tema: Monocromático Minimalista
+    Versão: 2.1 (corrigida)
+--]]
+
 local LunarShell = {}
 
 -- ============================================
@@ -43,7 +49,7 @@ local Config = {
 }
 
 -- ============================================
--- UTILIDADES CORRIGIDAS
+-- UTILIDADES
 -- ============================================
 
 local TweenService = game:GetService("TweenService")
@@ -63,13 +69,6 @@ local function CreateStroke(frame, thickness, color)
     stroke.Color = color or Config.Theme.Border
     stroke.Parent = frame
     return stroke
-end
-
--- CORRIGIDO: UIShadow não existe, usando UIListLayout com sombra ou apenas removendo
-local function CreateShadow(frame)
-    -- Sombra simulada com um frame atrás (opcional)
-    -- Como UIShadow não existe, vamos pular ou criar uma borda sutil
-    return frame
 end
 
 local function Tween(object, properties, duration)
@@ -103,7 +102,7 @@ local function LoadData()
 end
 
 -- ============================================
--- LOADING SCREEN (estilo HohoHub)
+-- LOADING SCREEN
 -- ============================================
 
 local function CreateLoadingScreen(parent, message, duration, callback)
@@ -135,7 +134,6 @@ local function CreateLoadingScreen(parent, message, duration, callback)
     titleLabel.Font = Config.Fonts.Bold
     titleLabel.Parent = loadingFrame
     
-    -- Barra de progresso
     local progressBg = Instance.new("Frame")
     progressBg.Size = UDim2.new(0.8, 0, 0, 4)
     progressBg.Position = UDim2.new(0.1, 0, 0.7, 0)
@@ -151,7 +149,6 @@ local function CreateLoadingScreen(parent, message, duration, callback)
     progressFill.Parent = progressBg
     CreateCorner(progressFill, 2)
     
-    -- Animação de loading (pontinhos)
     local dots = Instance.new("TextLabel")
     dots.Size = UDim2.new(1, 0, 0, 20)
     dots.Position = UDim2.new(0, 0, 0.85, 0)
@@ -162,7 +159,6 @@ local function CreateLoadingScreen(parent, message, duration, callback)
     dots.Font = Config.Fonts.Regular
     dots.Parent = loadingFrame
     
-    -- Animar a barra de progresso
     local step = 0
     local connection
     connection = RunService.RenderStepped:Connect(function(dt)
@@ -170,7 +166,6 @@ local function CreateLoadingScreen(parent, message, duration, callback)
         if step >= 1 then step = 1 end
         progressFill.Size = UDim2.new(step, 0, 1, 0)
         
-        -- Animar pontinhos
         local dotCount = math.floor(step * 3) % 3 + 1
         local dotString = ""
         for i = 1, 3 do
@@ -220,7 +215,6 @@ local function CreateKeyScreen(parent, onSuccess, validKeys)
     CreateCorner(keyFrame, 16)
     CreateStroke(keyFrame, 1)
     
-    -- Ícone de cadeado
     local icon = Instance.new("TextLabel")
     icon.Size = UDim2.new(0, 60, 0, 60)
     icon.Position = UDim2.new(0.5, -30, 0, 20)
@@ -251,7 +245,6 @@ local function CreateKeyScreen(parent, onSuccess, validKeys)
     subtitle.Font = Config.Fonts.Regular
     subtitle.Parent = keyFrame
     
-    -- Campo de input
     local inputFrame = Instance.new("Frame")
     inputFrame.Size = UDim2.new(1, -40, 0, 44)
     inputFrame.Position = UDim2.new(0, 20, 0, 155)
@@ -273,7 +266,6 @@ local function CreateKeyScreen(parent, onSuccess, validKeys)
     keyInput.Font = Config.Fonts.Regular
     keyInput.Parent = inputFrame
     
-    -- Mensagem de erro
     local errorMsg = Instance.new("TextLabel")
     errorMsg.Size = UDim2.new(1, -40, 0, 20)
     errorMsg.Position = UDim2.new(0, 20, 0, 205)
@@ -284,7 +276,6 @@ local function CreateKeyScreen(parent, onSuccess, validKeys)
     errorMsg.Font = Config.Fonts.Regular
     errorMsg.Parent = keyFrame
     
-    -- Botão validar
     local validateBtn = Instance.new("TextButton")
     validateBtn.Size = UDim2.new(1, -40, 0, 44)
     validateBtn.Position = UDim2.new(0, 20, 0, 225)
@@ -567,8 +558,10 @@ function LunarShell:Init(options)
             currentCategory = name
         end)
         
+        -- CORREÇÃO: usar :Click() em vez de :Fire()
         if not currentCategory then
-            catBtn.MouseButton1Click:Fire()
+            task.wait(0.1) -- pequeno delay para garantir que tudo foi criado
+            catBtn:Click()
         end
         
         local categoryAPI = {}
@@ -723,6 +716,212 @@ function LunarShell:Init(options)
             }
         end
         
+        function categoryAPI:AddSlider(name, min, max, default, callback)
+            local frame = Instance.new("Frame")
+            frame.Size = UDim2.new(1, -20, 0, 70)
+            frame.BackgroundColor3 = Config.Theme.Surface
+            frame.Parent = catContainer
+            CreateCorner(frame, 10)
+            
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.new(1, -16, 0, 24)
+            label.Position = UDim2.new(0, 12, 0, 8)
+            label.BackgroundTransparency = 1
+            label.Text = name
+            label.TextColor3 = Config.Theme.Text
+            label.TextSize = Config.Sizes.Medium
+            label.Font = Config.Fonts.Regular
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            label.Parent = frame
+            
+            local valueLabel = Instance.new("TextLabel")
+            valueLabel.Size = UDim2.new(0, 60, 0, 24)
+            valueLabel.Position = UDim2.new(1, -72, 0, 8)
+            valueLabel.BackgroundTransparency = 1
+            valueLabel.Text = tostring(default or 0)
+            valueLabel.TextColor3 = Config.Theme.Accent
+            valueLabel.TextSize = Config.Sizes.Small
+            valueLabel.Font = Config.Fonts.Medium
+            valueLabel.TextXAlignment = Enum.TextXAlignment.Right
+            valueLabel.Parent = frame
+            
+            local track = Instance.new("Frame")
+            track.Size = UDim2.new(1, -24, 0, 4)
+            track.Position = UDim2.new(0, 12, 1, -20)
+            track.BackgroundColor3 = Config.Theme.SurfaceHover
+            track.BorderSizePixel = 0
+            track.Parent = frame
+            CreateCorner(track, 2)
+            
+            local fill = Instance.new("Frame")
+            fill.Size = UDim2.new(0, 0, 1, 0)
+            fill.BackgroundColor3 = Config.Theme.Accent
+            fill.BorderSizePixel = 0
+            fill.Parent = track
+            CreateCorner(fill, 2)
+            
+            local knob = Instance.new("Frame")
+            knob.Size = UDim2.new(0, 14, 0, 14)
+            knob.Position = UDim2.new(0, -7, 0, -5)
+            knob.BackgroundColor3 = Config.Theme.Text
+            knob.BorderSizePixel = 0
+            knob.Parent = track
+            CreateCorner(knob, 7)
+            
+            local value = default or min
+            local dragging = false
+            
+            local function updateSlider(inputValue)
+                local percent = (inputValue - min) / (max - min)
+                percent = math.clamp(percent, 0, 1)
+                fill.Size = UDim2.new(percent, 0, 1, 0)
+                knob.Position = UDim2.new(percent, -7, 0, -5)
+                value = min + (percent * (max - min))
+                valueLabel.Text = string.format("%.1f", value)
+                if callback then callback(value) end
+                SavedData.Settings[name] = value
+                SaveData()
+            end
+            
+            updateSlider(value)
+            
+            knob.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    dragging = true
+                end
+            end)
+            knob.InputEnded:Connect(function() dragging = false end)
+            
+            track.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    local pos = input.Position.X - track.AbsolutePosition.X
+                    local percent = math.clamp(pos / track.AbsoluteSize.X, 0, 1)
+                    updateSlider(min + (percent * (max - min)))
+                end
+            end)
+            
+            UserInputService.InputChanged:Connect(function(input)
+                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                    local pos = input.Position.X - track.AbsolutePosition.X
+                    local percent = math.clamp(pos / track.AbsoluteSize.X, 0, 1)
+                    updateSlider(min + (percent * (max - min)))
+                end
+            end)
+            
+            if SavedData.Settings[name] then
+                updateSlider(SavedData.Settings[name])
+            end
+            
+            return {
+                SetValue = updateSlider,
+                GetValue = function() return value end
+            }
+        end
+        
+        function categoryAPI:AddDropdown(name, options, default, callback)
+            local frame = Instance.new("Frame")
+            frame.Size = UDim2.new(1, -20, 0, 70)
+            frame.BackgroundColor3 = Config.Theme.Surface
+            frame.Parent = catContainer
+            CreateCorner(frame, 10)
+            
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.new(1, -16, 0, 24)
+            label.Position = UDim2.new(0, 12, 0, 8)
+            label.BackgroundTransparency = 1
+            label.Text = name
+            label.TextColor3 = Config.Theme.Text
+            label.TextSize = Config.Sizes.Medium
+            label.Font = Config.Fonts.Regular
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            label.Parent = frame
+            
+            local dropdownBtn = Instance.new("TextButton")
+            dropdownBtn.Size = UDim2.new(1, -24, 0, 32)
+            dropdownBtn.Position = UDim2.new(0, 12, 1, -40)
+            dropdownBtn.BackgroundColor3 = Config.Theme.SurfaceHover
+            dropdownBtn.Text = default or options[1]
+            dropdownBtn.TextColor3 = Config.Theme.Text
+            dropdownBtn.TextSize = Config.Sizes.Small
+            dropdownBtn.Font = Config.Fonts.Regular
+            dropdownBtn.BorderSizePixel = 0
+            dropdownBtn.Parent = frame
+            CreateCorner(dropdownBtn, 8)
+            
+            local dropdownList = Instance.new("Frame")
+            dropdownList.Size = UDim2.new(1, 0, 0, 0)
+            dropdownList.Position = UDim2.new(0, 0, 1, 4)
+            dropdownList.BackgroundColor3 = Config.Theme.Surface
+            dropdownList.BackgroundTransparency = 1
+            dropdownList.Visible = false
+            dropdownList.Parent = dropdownBtn
+            CreateCorner(dropdownList, 8)
+            
+            local listLayout = Instance.new("UIListLayout")
+            listLayout.Padding = UDim.new(0, 2)
+            listLayout.Parent = dropdownList
+            
+            local isOpen = false
+            local currentOption = default or options[1]
+            
+            local function updateOptions()
+                for _, child in ipairs(dropdownList:GetChildren()) do
+                    if child:IsA("TextButton") then child:Destroy() end
+                end
+                
+                local height = 0
+                for _, option in ipairs(options) do
+                    local optBtn = Instance.new("TextButton")
+                    optBtn.Size = UDim2.new(1, 0, 0, 32)
+                    optBtn.Text = option
+                    optBtn.TextColor3 = Config.Theme.Text
+                    optBtn.TextSize = Config.Sizes.Small
+                    optBtn.Font = Config.Fonts.Regular
+                    optBtn.BackgroundColor3 = Config.Theme.SurfaceHover
+                    optBtn.BorderSizePixel = 0
+                    optBtn.Parent = dropdownList
+                    
+                    optBtn.MouseButton1Click:Connect(function()
+                        currentOption = option
+                        dropdownBtn.Text = option
+                        isOpen = false
+                        dropdownList.Visible = false
+                        dropdownList.BackgroundTransparency = 1
+                        if callback then callback(option) end
+                        SavedData.Settings[name] = option
+                        SaveData()
+                    end)
+                    
+                    height = height + 34
+                end
+                
+                dropdownList.Size = UDim2.new(1, 0, 0, height)
+            end
+            
+            updateOptions()
+            
+            dropdownBtn.MouseButton1Click:Connect(function()
+                isOpen = not isOpen
+                dropdownList.Visible = isOpen
+                dropdownList.BackgroundTransparency = isOpen and 0 or 1
+            end)
+            
+            if SavedData.Settings[name] then
+                currentOption = SavedData.Settings[name]
+                dropdownBtn.Text = currentOption
+                if callback then callback(currentOption) end
+            end
+            
+            return {
+                SetValue = function(opt)
+                    currentOption = opt
+                    dropdownBtn.Text = opt
+                    if callback then callback(opt) end
+                end,
+                GetValue = function() return currentOption end
+            }
+        end
+        
         function categoryAPI:AddDivider(text)
             local divider = Instance.new("Frame")
             divider.Size = UDim2.new(1, -20, 0, 32)
@@ -769,7 +968,6 @@ function LunarShell:Init(options)
         CreateStroke(notifFrame, 1)
         
         local icon = "📌"
-        local iconColor = Config.Theme.Text
         if type == "success" then icon = "✓"
         elseif type == "error" then icon = "✕"
         elseif type == "warning" then icon = "⚠"
