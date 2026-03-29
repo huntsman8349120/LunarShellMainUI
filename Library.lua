@@ -1,13 +1,13 @@
 --[[
     LUNARSHELL HUB - Script Library
     Tema: Monocromático Minimalista
-    Versão: 2.1 (corrigida)
+    Versão: 2.2 (completa)
 --]]
 
 local LunarShell = {}
 
 -- ============================================
--- CONFIGURAÇÕES GLOBAIS
+-- CONFIGURAÇÕES
 -- ============================================
 
 local Config = {
@@ -77,7 +77,6 @@ local function Tween(object, properties, duration)
     return tween
 end
 
--- Sistema de salvamento
 local SavedData = {
     KeyValidated = false,
     Settings = {},
@@ -200,54 +199,56 @@ local function CreateKeyScreen(parent, onSuccess, validKeys)
     local overlay = Instance.new("Frame")
     overlay.Size = UDim2.new(1, 0, 1, 0)
     overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    overlay.BackgroundTransparency = 0.85
+    overlay.BackgroundTransparency = 0.9
     overlay.BorderSizePixel = 0
     overlay.Parent = parent
     overlay.ZIndex = 200
     
     local keyFrame = Instance.new("Frame")
-    keyFrame.Size = UDim2.new(0, 340, 0, 280)
-    keyFrame.Position = UDim2.new(0.5, -170, 0.5, -140)
+    keyFrame.Size = UDim2.new(0, 360, 0, 320)
+    keyFrame.Position = UDim2.new(0.5, -180, 0.5, -160)
     keyFrame.BackgroundColor3 = Config.Theme.Surface
     keyFrame.BorderSizePixel = 0
     keyFrame.Parent = overlay
     keyFrame.ZIndex = 201
-    CreateCorner(keyFrame, 16)
+    CreateCorner(keyFrame, 20)
     CreateStroke(keyFrame, 1)
     
     local icon = Instance.new("TextLabel")
-    icon.Size = UDim2.new(0, 60, 0, 60)
-    icon.Position = UDim2.new(0.5, -30, 0, 20)
+    icon.Size = UDim2.new(0, 70, 0, 70)
+    icon.Position = UDim2.new(0.5, -35, 0, 20)
     icon.BackgroundTransparency = 1
-    icon.Text = "🔒"
+    icon.Text = "🌙"
     icon.TextColor3 = Config.Theme.Accent
-    icon.TextSize = 48
+    icon.TextSize = 56
     icon.Font = Config.Fonts.Regular
     icon.Parent = keyFrame
     
     local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, -40, 0, 30)
-    title.Position = UDim2.new(0, 20, 0, 90)
+    title.Size = UDim2.new(1, -40, 0, 35)
+    title.Position = UDim2.new(0, 20, 0, 100)
     title.BackgroundTransparency = 1
     title.Text = "LUNARSHELL HUB"
     title.TextColor3 = Config.Theme.Text
     title.TextSize = Config.Sizes.Huge
     title.Font = Config.Fonts.Bold
+    title.TextXAlignment = Enum.TextXAlignment.Center
     title.Parent = keyFrame
     
     local subtitle = Instance.new("TextLabel")
     subtitle.Size = UDim2.new(1, -40, 0, 20)
-    subtitle.Position = UDim2.new(0, 20, 0, 125)
+    subtitle.Position = UDim2.new(0, 20, 0, 140)
     subtitle.BackgroundTransparency = 1
     subtitle.Text = "Insira a chave de ativação"
     subtitle.TextColor3 = Config.Theme.TextSecondary
     subtitle.TextSize = Config.Sizes.Small
     subtitle.Font = Config.Fonts.Regular
+    subtitle.TextXAlignment = Enum.TextXAlignment.Center
     subtitle.Parent = keyFrame
     
     local inputFrame = Instance.new("Frame")
     inputFrame.Size = UDim2.new(1, -40, 0, 44)
-    inputFrame.Position = UDim2.new(0, 20, 0, 155)
+    inputFrame.Position = UDim2.new(0, 20, 0, 175)
     inputFrame.BackgroundColor3 = Config.Theme.Background
     inputFrame.BorderSizePixel = 0
     inputFrame.Parent = keyFrame
@@ -268,17 +269,18 @@ local function CreateKeyScreen(parent, onSuccess, validKeys)
     
     local errorMsg = Instance.new("TextLabel")
     errorMsg.Size = UDim2.new(1, -40, 0, 20)
-    errorMsg.Position = UDim2.new(0, 20, 0, 205)
+    errorMsg.Position = UDim2.new(0, 20, 0, 230)
     errorMsg.BackgroundTransparency = 1
     errorMsg.Text = ""
     errorMsg.TextColor3 = Config.Theme.Danger
     errorMsg.TextSize = Config.Sizes.Small
     errorMsg.Font = Config.Fonts.Regular
+    errorMsg.TextXAlignment = Enum.TextXAlignment.Center
     errorMsg.Parent = keyFrame
     
     local validateBtn = Instance.new("TextButton")
     validateBtn.Size = UDim2.new(1, -40, 0, 44)
-    validateBtn.Position = UDim2.new(0, 20, 0, 225)
+    validateBtn.Position = UDim2.new(0, 20, 0, 260)
     validateBtn.Text = "VALIDAR ACESSO"
     validateBtn.TextColor3 = Config.Theme.Text
     validateBtn.TextSize = Config.Sizes.Medium
@@ -346,8 +348,8 @@ function LunarShell:Init(options)
     
     -- Janela principal
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = options.Size or UDim2.new(0, 900, 0, 580)
-    mainFrame.Position = UDim2.new(0.5, -450, 0.5, -290)
+    mainFrame.Size = options.Size or UDim2.new(0, 950, 0, 620)
+    mainFrame.Position = UDim2.new(0.5, -475, 0.5, -310)
     mainFrame.BackgroundColor3 = Config.Theme.Background
     mainFrame.BorderSizePixel = 0
     mainFrame.Parent = screenGui
@@ -357,42 +359,72 @@ function LunarShell:Init(options)
     
     -- Barra de título
     local titleBar = Instance.new("Frame")
-    titleBar.Size = UDim2.new(1, 0, 0, 48)
+    titleBar.Size = UDim2.new(1, 0, 0, 52)
     titleBar.BackgroundColor3 = Config.Theme.Surface
     titleBar.BorderSizePixel = 0
     titleBar.Parent = mainFrame
     CreateCorner(titleBar, 16)
     
-    -- Botões de janela
-    local closeBtn = Instance.new("TextButton")
-    closeBtn.Size = UDim2.new(0, 28, 0, 28)
-    closeBtn.Position = UDim2.new(1, -48, 0.5, -14)
-    closeBtn.BackgroundColor3 = Config.Theme.SurfaceHover
-    closeBtn.Text = "✕"
-    closeBtn.TextColor3 = Config.Theme.TextSecondary
-    closeBtn.TextSize = 14
-    closeBtn.Font = Config.Fonts.Regular
-    closeBtn.BorderSizePixel = 0
-    closeBtn.Parent = titleBar
-    CreateCorner(closeBtn, 14)
+    -- Botões da janela (todos os três)
+    local buttonsContainer = Instance.new("Frame")
+    buttonsContainer.Size = UDim2.new(0, 110, 1, 0)
+    buttonsContainer.Position = UDim2.new(1, -120, 0, 0)
+    buttonsContainer.BackgroundTransparency = 1
+    buttonsContainer.Parent = titleBar
     
     local minimizeBtn = Instance.new("TextButton")
-    minimizeBtn.Size = UDim2.new(0, 28, 0, 28)
-    minimizeBtn.Position = UDim2.new(1, -88, 0.5, -14)
+    minimizeBtn.Size = UDim2.new(0, 32, 0, 32)
+    minimizeBtn.Position = UDim2.new(0, 0, 0.5, -16)
     minimizeBtn.BackgroundColor3 = Config.Theme.SurfaceHover
     minimizeBtn.Text = "─"
     minimizeBtn.TextColor3 = Config.Theme.TextSecondary
-    minimizeBtn.TextSize = 14
+    minimizeBtn.TextSize = 18
     minimizeBtn.Font = Config.Fonts.Regular
     minimizeBtn.BorderSizePixel = 0
-    minimizeBtn.Parent = titleBar
-    CreateCorner(minimizeBtn, 14)
+    minimizeBtn.Parent = buttonsContainer
+    CreateCorner(minimizeBtn, 8)
+    
+    local maximizeBtn = Instance.new("TextButton")
+    maximizeBtn.Size = UDim2.new(0, 32, 0, 32)
+    maximizeBtn.Position = UDim2.new(0, 38, 0.5, -16)
+    maximizeBtn.BackgroundColor3 = Config.Theme.SurfaceHover
+    maximizeBtn.Text = "□"
+    maximizeBtn.TextColor3 = Config.Theme.TextSecondary
+    maximizeBtn.TextSize = 16
+    maximizeBtn.Font = Config.Fonts.Regular
+    maximizeBtn.BorderSizePixel = 0
+    maximizeBtn.Parent = buttonsContainer
+    CreateCorner(maximizeBtn, 8)
+    
+    local closeBtn = Instance.new("TextButton")
+    closeBtn.Size = UDim2.new(0, 32, 0, 32)
+    closeBtn.Position = UDim2.new(0, 76, 0.5, -16)
+    closeBtn.BackgroundColor3 = Config.Theme.SurfaceHover
+    closeBtn.Text = "✕"
+    closeBtn.TextColor3 = Config.Theme.TextSecondary
+    closeBtn.TextSize = 16
+    closeBtn.Font = Config.Fonts.Regular
+    closeBtn.BorderSizePixel = 0
+    closeBtn.Parent = buttonsContainer
+    CreateCorner(closeBtn, 8)
+    
+    -- Ícone e título
+    local iconLabel = Instance.new("TextLabel")
+    iconLabel.Size = UDim2.new(0, 36, 1, 0)
+    iconLabel.Position = UDim2.new(0, 16, 0, 0)
+    iconLabel.BackgroundTransparency = 1
+    iconLabel.Text = "🌙"
+    iconLabel.TextColor3 = Config.Theme.Accent
+    iconLabel.TextSize = 22
+    iconLabel.Font = Config.Fonts.Regular
+    iconLabel.TextXAlignment = Enum.TextXAlignment.Center
+    iconLabel.Parent = titleBar
     
     local titleLabel = Instance.new("TextLabel")
-    titleLabel.Size = UDim2.new(0, 250, 1, 0)
-    titleLabel.Position = UDim2.new(0, 16, 0, 0)
+    titleLabel.Size = UDim2.new(0, 200, 1, 0)
+    titleLabel.Position = UDim2.new(0, 56, 0, 0)
     titleLabel.BackgroundTransparency = 1
-    titleLabel.Text = "🌙 " .. title
+    titleLabel.Text = title
     titleLabel.TextColor3 = Config.Theme.Text
     titleLabel.TextSize = Config.Sizes.Medium
     titleLabel.Font = Config.Fonts.Bold
@@ -401,14 +433,14 @@ function LunarShell:Init(options)
     
     -- Área de conteúdo
     local contentArea = Instance.new("Frame")
-    contentArea.Size = UDim2.new(1, -24, 1, -68)
-    contentArea.Position = UDim2.new(0, 12, 0, 56)
+    contentArea.Size = UDim2.new(1, -24, 1, -72)
+    contentArea.Position = UDim2.new(0, 12, 0, 60)
     contentArea.BackgroundTransparency = 1
     contentArea.Parent = mainFrame
     
     -- Sidebar
     local sidebar = Instance.new("ScrollingFrame")
-    sidebar.Size = UDim2.new(0, 200, 1, 0)
+    sidebar.Size = UDim2.new(0, 210, 1, 0)
     sidebar.BackgroundTransparency = 1
     sidebar.BorderSizePixel = 0
     sidebar.Parent = contentArea
@@ -418,12 +450,12 @@ function LunarShell:Init(options)
     local sidebarLayout = Instance.new("UIListLayout")
     sidebarLayout.Parent = sidebar
     sidebarLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    sidebarLayout.Padding = UDim.new(0, 6)
+    sidebarLayout.Padding = UDim.new(0, 8)
     
     -- Workarea
     local workarea = Instance.new("ScrollingFrame")
-    workarea.Size = UDim2.new(1, -220, 1, 0)
-    workarea.Position = UDim2.new(0, 220, 0, 0)
+    workarea.Size = UDim2.new(1, -230, 1, 0)
+    workarea.Position = UDim2.new(0, 230, 0, 0)
     workarea.BackgroundTransparency = 1
     workarea.BorderSizePixel = 0
     workarea.Parent = contentArea
@@ -472,6 +504,7 @@ function LunarShell:Init(options)
     
     -- Funções da janela
     local isMinimized = false
+    local isMaximized = false
     local savedPos = mainFrame.Position
     local savedSize = mainFrame.Size
     
@@ -485,13 +518,33 @@ function LunarShell:Init(options)
     
     minimizeBtn.MouseButton1Click:Connect(function()
         if isMinimized then
-            Tween(mainFrame, {Size = savedSize, Position = savedPos}, 0.3)
+            Tween(mainFrame, {Size = savedSize, Position = savedPos, BackgroundTransparency = 0}, 0.3)
             isMinimized = false
+            -- Reexibir conteúdo
+            contentArea.Visible = true
+            sidebar.Visible = true
+            workarea.Visible = true
         else
             savedPos = mainFrame.Position
             savedSize = mainFrame.Size
-            Tween(mainFrame, {Size = UDim2.new(0, 400, 0, 50), Position = UDim2.new(0.5, -200, 0.5, -25)}, 0.3)
+            Tween(mainFrame, {Size = UDim2.new(0, 400, 0, 50), Position = UDim2.new(0.5, -200, 0.5, -25), BackgroundTransparency = 0}, 0.3)
             isMinimized = true
+            -- Ocultar conteúdo
+            contentArea.Visible = false
+            sidebar.Visible = false
+            workarea.Visible = false
+        end
+    end)
+    
+    maximizeBtn.MouseButton1Click:Connect(function()
+        if isMaximized then
+            Tween(mainFrame, {Size = savedSize, Position = savedPos}, 0.3)
+            isMaximized = false
+        else
+            savedPos = mainFrame.Position
+            savedSize = mainFrame.Size
+            Tween(mainFrame, {Size = UDim2.new(1, -40, 1, -40), Position = UDim2.new(0, 20, 0, 20)}, 0.3)
+            isMaximized = true
         end
     end)
     
@@ -512,11 +565,11 @@ function LunarShell:Init(options)
     
     -- ========== SISTEMA DE CATEGORIAS ==========
     local categories = {}
-    local currentCategory = nil
+    local firstCategory = nil
     
     function LunarShell:Category(name, icon)
         local catBtn = Instance.new("TextButton")
-        catBtn.Size = UDim2.new(1, -12, 0, 42)
+        catBtn.Size = UDim2.new(1, -12, 0, 44)
         catBtn.Position = UDim2.new(0, 6, 0, 0)
         catBtn.BackgroundColor3 = Config.Theme.Surface
         catBtn.Text = "  " .. (icon or "◆") .. "  " .. name
@@ -526,7 +579,7 @@ function LunarShell:Init(options)
         catBtn.TextXAlignment = Enum.TextXAlignment.Left
         catBtn.BorderSizePixel = 0
         catBtn.Parent = sidebar
-        CreateCorner(catBtn, 8)
+        CreateCorner(catBtn, 10)
         
         local catContainer = Instance.new("Frame")
         catContainer.Size = UDim2.new(1, 0, 0, 0)
@@ -538,13 +591,17 @@ function LunarShell:Init(options)
         local catLayout = Instance.new("UIListLayout")
         catLayout.Parent = catContainer
         catLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        catLayout.Padding = UDim.new(0, 10)
+        catLayout.Padding = UDim.new(0, 12)
         catLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
         
         categories[name] = {
             Button = catBtn,
             Container = catContainer
         }
+        
+        if not firstCategory then
+            firstCategory = name
+        end
         
         catBtn.MouseButton1Click:Connect(function()
             for _, cat in pairs(categories) do
@@ -555,14 +612,7 @@ function LunarShell:Init(options)
             catBtn.BackgroundColor3 = Config.Theme.Primary
             catBtn.TextColor3 = Config.Theme.Text
             catContainer.Visible = true
-            currentCategory = name
         end)
-        
-        -- CORREÇÃO: usar :Click() em vez de :Fire()
-        if not currentCategory then
-            task.wait(0.1) -- pequeno delay para garantir que tudo foi criado
-            catBtn:Click()
-        end
         
         local categoryAPI = {}
         
@@ -572,12 +622,12 @@ function LunarShell:Init(options)
             scriptCard.BackgroundColor3 = Config.Theme.Surface
             scriptCard.Parent = catContainer
             scriptCard.AutomaticSize = Enum.AutomaticSize.Y
-            CreateCorner(scriptCard, 10)
+            CreateCorner(scriptCard, 12)
             CreateStroke(scriptCard, 1)
             
             local titleLabel = Instance.new("TextLabel")
             titleLabel.Size = UDim2.new(1, -24, 0, 28)
-            titleLabel.Position = UDim2.new(0, 12, 0, 10)
+            titleLabel.Position = UDim2.new(0, 12, 0, 12)
             titleLabel.BackgroundTransparency = 1
             titleLabel.Text = "📜  " .. name
             titleLabel.TextColor3 = Config.Theme.Text
@@ -588,7 +638,7 @@ function LunarShell:Init(options)
             
             local descLabel = Instance.new("TextLabel")
             descLabel.Size = UDim2.new(1, -24, 0, 36)
-            descLabel.Position = UDim2.new(0, 12, 0, 40)
+            descLabel.Position = UDim2.new(0, 12, 0, 44)
             descLabel.BackgroundTransparency = 1
             descLabel.Text = description or "Sem descrição"
             descLabel.TextColor3 = Config.Theme.TextSecondary
@@ -599,8 +649,8 @@ function LunarShell:Init(options)
             descLabel.Parent = scriptCard
             
             local executeBtn = Instance.new("TextButton")
-            executeBtn.Size = UDim2.new(0, 100, 0, 32)
-            executeBtn.Position = UDim2.new(1, -112, 1, -42)
+            executeBtn.Size = UDim2.new(0, 100, 0, 34)
+            executeBtn.Position = UDim2.new(1, -112, 1, -44)
             executeBtn.Text = "▶ EXECUTAR"
             executeBtn.TextColor3 = Config.Theme.Text
             executeBtn.TextSize = Config.Sizes.Small
@@ -608,7 +658,7 @@ function LunarShell:Init(options)
             executeBtn.BackgroundColor3 = Config.Theme.Success
             executeBtn.BorderSizePixel = 0
             executeBtn.Parent = scriptCard
-            CreateCorner(executeBtn, 6)
+            CreateCorner(executeBtn, 8)
             
             executeBtn.MouseEnter:Connect(function()
                 Tween(executeBtn, {BackgroundColor3 = Color3.fromRGB(90, 120, 90)}, 0.15)
@@ -621,7 +671,7 @@ function LunarShell:Init(options)
                 if callback then
                     local success, err = pcall(callback)
                     if not success then
-                        LunarShell:Notify("Erro", "Falha ao executar script: " .. tostring(err), "error", 3)
+                        LunarShell:Notify("Erro", "Falha ao executar: " .. tostring(err), "error", 3)
                     else
                         LunarShell:Notify("Sucesso", "Script '" .. name .. "' executado!", "success", 2)
                     end
@@ -659,7 +709,7 @@ function LunarShell:Init(options)
         
         function categoryAPI:AddToggle(name, defaultState, callback)
             local frame = Instance.new("Frame")
-            frame.Size = UDim2.new(1, -20, 0, 48)
+            frame.Size = UDim2.new(1, -20, 0, 52)
             frame.BackgroundColor3 = Config.Theme.Surface
             frame.Parent = catContainer
             CreateCorner(frame, 10)
@@ -676,27 +726,27 @@ function LunarShell:Init(options)
             label.Parent = frame
             
             local toggleBg = Instance.new("Frame")
-            toggleBg.Size = UDim2.new(0, 48, 0, 24)
-            toggleBg.Position = UDim2.new(1, -60, 0.5, -12)
+            toggleBg.Size = UDim2.new(0, 50, 0, 26)
+            toggleBg.Position = UDim2.new(1, -62, 0.5, -13)
             toggleBg.BackgroundColor3 = defaultState and Config.Theme.Success or Config.Theme.SurfaceHover
             toggleBg.BorderSizePixel = 0
             toggleBg.Parent = frame
-            CreateCorner(toggleBg, 12)
+            CreateCorner(toggleBg, 13)
             
             local toggleKnob = Instance.new("Frame")
-            toggleKnob.Size = UDim2.new(0, 20, 0, 20)
-            toggleKnob.Position = defaultState and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
+            toggleKnob.Size = UDim2.new(0, 22, 0, 22)
+            toggleKnob.Position = defaultState and UDim2.new(1, -24, 0.5, -11) or UDim2.new(0, 2, 0.5, -11)
             toggleKnob.BackgroundColor3 = Config.Theme.Text
             toggleKnob.BorderSizePixel = 0
             toggleKnob.Parent = toggleBg
-            CreateCorner(toggleKnob, 10)
+            CreateCorner(toggleKnob, 11)
             
             local toggled = defaultState or false
             
             local function updateToggle(state)
                 toggled = state
                 Tween(toggleBg, {BackgroundColor3 = toggled and Config.Theme.Success or Config.Theme.SurfaceHover}, 0.2)
-                Tween(toggleKnob, {Position = toggled and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)}, 0.2)
+                Tween(toggleKnob, {Position = toggled and UDim2.new(1, -24, 0.5, -11) or UDim2.new(0, 2, 0.5, -11)}, 0.2)
                 if callback then callback(toggled) end
                 SavedData.ScriptsState[name] = toggled
                 SaveData()
@@ -718,14 +768,14 @@ function LunarShell:Init(options)
         
         function categoryAPI:AddSlider(name, min, max, default, callback)
             local frame = Instance.new("Frame")
-            frame.Size = UDim2.new(1, -20, 0, 70)
+            frame.Size = UDim2.new(1, -20, 0, 80)
             frame.BackgroundColor3 = Config.Theme.Surface
             frame.Parent = catContainer
             CreateCorner(frame, 10)
             
             local label = Instance.new("TextLabel")
             label.Size = UDim2.new(1, -16, 0, 24)
-            label.Position = UDim2.new(0, 12, 0, 8)
+            label.Position = UDim2.new(0, 12, 0, 10)
             label.BackgroundTransparency = 1
             label.Text = name
             label.TextColor3 = Config.Theme.Text
@@ -736,7 +786,7 @@ function LunarShell:Init(options)
             
             local valueLabel = Instance.new("TextLabel")
             valueLabel.Size = UDim2.new(0, 60, 0, 24)
-            valueLabel.Position = UDim2.new(1, -72, 0, 8)
+            valueLabel.Position = UDim2.new(1, -72, 0, 10)
             valueLabel.BackgroundTransparency = 1
             valueLabel.Text = tostring(default or 0)
             valueLabel.TextColor3 = Config.Theme.Accent
@@ -747,7 +797,7 @@ function LunarShell:Init(options)
             
             local track = Instance.new("Frame")
             track.Size = UDim2.new(1, -24, 0, 4)
-            track.Position = UDim2.new(0, 12, 1, -20)
+            track.Position = UDim2.new(0, 12, 1, -24)
             track.BackgroundColor3 = Config.Theme.SurfaceHover
             track.BorderSizePixel = 0
             track.Parent = frame
@@ -820,14 +870,14 @@ function LunarShell:Init(options)
         
         function categoryAPI:AddDropdown(name, options, default, callback)
             local frame = Instance.new("Frame")
-            frame.Size = UDim2.new(1, -20, 0, 70)
+            frame.Size = UDim2.new(1, -20, 0, 80)
             frame.BackgroundColor3 = Config.Theme.Surface
             frame.Parent = catContainer
             CreateCorner(frame, 10)
             
             local label = Instance.new("TextLabel")
             label.Size = UDim2.new(1, -16, 0, 24)
-            label.Position = UDim2.new(0, 12, 0, 8)
+            label.Position = UDim2.new(0, 12, 0, 10)
             label.BackgroundTransparency = 1
             label.Text = name
             label.TextColor3 = Config.Theme.Text
@@ -837,8 +887,8 @@ function LunarShell:Init(options)
             label.Parent = frame
             
             local dropdownBtn = Instance.new("TextButton")
-            dropdownBtn.Size = UDim2.new(1, -24, 0, 32)
-            dropdownBtn.Position = UDim2.new(0, 12, 1, -40)
+            dropdownBtn.Size = UDim2.new(1, -24, 0, 36)
+            dropdownBtn.Position = UDim2.new(0, 12, 1, -44)
             dropdownBtn.BackgroundColor3 = Config.Theme.SurfaceHover
             dropdownBtn.Text = default or options[1]
             dropdownBtn.TextColor3 = Config.Theme.Text
@@ -872,7 +922,7 @@ function LunarShell:Init(options)
                 local height = 0
                 for _, option in ipairs(options) do
                     local optBtn = Instance.new("TextButton")
-                    optBtn.Size = UDim2.new(1, 0, 0, 32)
+                    optBtn.Size = UDim2.new(1, 0, 0, 34)
                     optBtn.Text = option
                     optBtn.TextColor3 = Config.Theme.Text
                     optBtn.TextSize = Config.Sizes.Small
@@ -892,7 +942,7 @@ function LunarShell:Init(options)
                         SaveData()
                     end)
                     
-                    height = height + 34
+                    height = height + 36
                 end
                 
                 dropdownList.Size = UDim2.new(1, 0, 0, height)
@@ -924,7 +974,7 @@ function LunarShell:Init(options)
         
         function categoryAPI:AddDivider(text)
             local divider = Instance.new("Frame")
-            divider.Size = UDim2.new(1, -20, 0, 32)
+            divider.Size = UDim2.new(1, -20, 0, 36)
             divider.BackgroundTransparency = 1
             divider.Parent = catContainer
             
@@ -940,7 +990,7 @@ function LunarShell:Init(options)
             
             local line = Instance.new("Frame")
             line.Size = UDim2.new(1, 0, 0, 1)
-            line.Position = UDim2.new(0, 0, 1, -4)
+            line.Position = UDim2.new(0, 0, 1, -6)
             line.BackgroundColor3 = Config.Theme.Border
             line.BorderSizePixel = 0
             line.Parent = divider
@@ -959,12 +1009,12 @@ function LunarShell:Init(options)
         duration = duration or 3
         
         local notifFrame = Instance.new("Frame")
-        notifFrame.Size = UDim2.new(0, 320, 0, 70)
-        notifFrame.Position = UDim2.new(1, -340, 0, 20 + (#notifications * 80))
+        notifFrame.Size = UDim2.new(0, 340, 0, 80)
+        notifFrame.Position = UDim2.new(1, -360, 0, 20 + (#notifications * 90))
         notifFrame.BackgroundColor3 = Config.Theme.Surface
         notifFrame.BorderSizePixel = 0
         notifFrame.Parent = screenGui
-        CreateCorner(notifFrame, 10)
+        CreateCorner(notifFrame, 12)
         CreateStroke(notifFrame, 1)
         
         local icon = "📌"
@@ -974,8 +1024,8 @@ function LunarShell:Init(options)
         end
         
         local titleLabel = Instance.new("TextLabel")
-        titleLabel.Size = UDim2.new(1, -40, 0, 24)
-        titleLabel.Position = UDim2.new(0, 40, 0, 8)
+        titleLabel.Size = UDim2.new(1, -40, 0, 28)
+        titleLabel.Position = UDim2.new(0, 40, 0, 10)
         titleLabel.BackgroundTransparency = 1
         titleLabel.Text = icon .. "  " .. title
         titleLabel.TextColor3 = Config.Theme.Text
@@ -985,8 +1035,8 @@ function LunarShell:Init(options)
         titleLabel.Parent = notifFrame
         
         local messageLabel = Instance.new("TextLabel")
-        messageLabel.Size = UDim2.new(1, -40, 0, 30)
-        messageLabel.Position = UDim2.new(0, 40, 0, 34)
+        messageLabel.Size = UDim2.new(1, -40, 0, 36)
+        messageLabel.Position = UDim2.new(0, 40, 0, 40)
         messageLabel.BackgroundTransparency = 1
         messageLabel.Text = message or ""
         messageLabel.TextColor3 = Config.Theme.TextSecondary
@@ -1001,8 +1051,8 @@ function LunarShell:Init(options)
         if confirmMode then
             duration = 0
             local yesBtn = Instance.new("TextButton")
-            yesBtn.Size = UDim2.new(0, 60, 0, 28)
-            yesBtn.Position = UDim2.new(1, -140, 1, -36)
+            yesBtn.Size = UDim2.new(0, 70, 0, 32)
+            yesBtn.Position = UDim2.new(1, -160, 1, -40)
             yesBtn.BackgroundColor3 = Config.Theme.Success
             yesBtn.Text = "Sim"
             yesBtn.TextColor3 = Config.Theme.Text
@@ -1013,8 +1063,8 @@ function LunarShell:Init(options)
             CreateCorner(yesBtn, 6)
             
             local noBtn = Instance.new("TextButton")
-            noBtn.Size = UDim2.new(0, 60, 0, 28)
-            noBtn.Position = UDim2.new(1, -70, 1, -36)
+            noBtn.Size = UDim2.new(0, 70, 0, 32)
+            noBtn.Position = UDim2.new(1, -80, 1, -40)
             noBtn.BackgroundColor3 = Config.Theme.Danger
             noBtn.Text = "Não"
             noBtn.TextColor3 = Config.Theme.Text
@@ -1029,7 +1079,7 @@ function LunarShell:Init(options)
                 notifFrame:Destroy()
                 table.remove(notifications, table.find(notifications, notifFrame))
                 for i, n in ipairs(notifications) do
-                    Tween(n, {Position = UDim2.new(1, -340, 0, 20 + ((i-1) * 80))}, 0.2)
+                    Tween(n, {Position = UDim2.new(1, -360, 0, 20 + ((i-1) * 90))}, 0.2)
                 end
             end)
             
@@ -1038,22 +1088,22 @@ function LunarShell:Init(options)
                 notifFrame:Destroy()
                 table.remove(notifications, table.find(notifications, notifFrame))
                 for i, n in ipairs(notifications) do
-                    Tween(n, {Position = UDim2.new(1, -340, 0, 20 + ((i-1) * 80))}, 0.2)
+                    Tween(n, {Position = UDim2.new(1, -360, 0, 20 + ((i-1) * 90))}, 0.2)
                 end
             end)
         end
         
-        Tween(notifFrame, {Position = UDim2.new(1, -340, 0, 20 + ((#notifications-1) * 80))}, 0.3)
+        Tween(notifFrame, {Position = UDim2.new(1, -360, 0, 20 + ((#notifications-1) * 90))}, 0.3)
         
         if duration > 0 then
             task.spawn(function()
                 task.wait(duration)
-                Tween(notifFrame, {Position = UDim2.new(1, -320, 0, 20 + ((#notifications-1) * 80)), BackgroundTransparency = 1}, 0.3)
+                Tween(notifFrame, {Position = UDim2.new(1, -340, 0, 20 + ((#notifications-1) * 90)), BackgroundTransparency = 1}, 0.3)
                 task.wait(0.3)
                 notifFrame:Destroy()
                 table.remove(notifications, table.find(notifications, notifFrame))
                 for i, n in ipairs(notifications) do
-                    Tween(n, {Position = UDim2.new(1, -340, 0, 20 + ((i-1) * 80))}, 0.2)
+                    Tween(n, {Position = UDim2.new(1, -360, 0, 20 + ((i-1) * 90))}, 0.2)
                 end
             end)
         end
@@ -1065,9 +1115,13 @@ function LunarShell:Init(options)
         return CreateLoadingScreen(screenGui, message, duration, callback)
     end
     
-    -- ========== INICIALIZAÇÃO COM KEY ==========
+    -- ========== INICIALIZAÇÃO ==========
     local function ShowMainUI()
         mainFrame.Visible = true
+        -- Selecionar primeira categoria
+        if firstCategory and categories[firstCategory] then
+            categories[firstCategory].Button.MouseButton1Click:Fire()
+        end
         LunarShell:Loading("Inicializando LunarShell Hub...", 1.2, function()
             LunarShell:Notify("Bem-vindo", "LunarShell Hub carregado! Pressione " .. tostring(toggleKey):sub(12) .. " para ocultar", "success", 4)
         end)
